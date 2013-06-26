@@ -12,7 +12,7 @@ class GameElement(object):
         pass
 
     def __str__(self):
-        return "<%s located at %r, %r>"%(type(self).__name__, self.x, self.y)
+        return "<%s is located at %r, %r>"%(type(self).__name__, self.x, self.y)
 
     def update(self, dt):
         pass
