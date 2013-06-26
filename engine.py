@@ -4,6 +4,7 @@ import pyglet
 from pyglet.window import key
 from core import GameElement
 
+
 SCREEN_X = 800
 SCREEN_Y = 700
 
@@ -84,7 +85,8 @@ class Board(object):
         for y in range(height):
             self.content_layer.append(list(row))
 
-        self.message = pyglet.text.Label(text = "", x=10, y=SCREEN_Y-30)
+        self.message = pyglet.text.Label(text = "", x=10, y=SCREEN_Y-30, 
+            color = (0,0,0,255), bold = True, font_size = 14, anchor_y = 'center')
         self.bg_sprites = []
 
         for y in range(height):
