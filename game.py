@@ -14,8 +14,8 @@ PLAYER_GIRL = None
 PLAYER_BOY = None
 ######################
 
-GAME_WIDTH = 8
-GAME_HEIGHT = 8
+GAME_WIDTH = 10
+GAME_HEIGHT = 10
 
 #### Put class definitions here ####
 # class Rock(GameElement):
@@ -26,7 +26,7 @@ GAME_HEIGHT = 8
 #     IMAGE = "Wall"
 #     SOLID = True
 
-# class Trees(GameElement):
+#class Trees(GameElement):
 #     IMAGE = "ShortTree"
 #     SOLID = True
 
@@ -94,27 +94,11 @@ def initialize():
     GAME_BOARD.set_el(6,1,PLAYER_BOY)
 
     #Add any/all obstacles to the board
-    obstacle_positions = [
-        (2,4), 
-        (2,3),
-        (2,2),
-        (3,2),
-        (5,2),
-        (6,3),
-        (2,6),
-        (3,6),
-        (4,6),
-        (5,6),
-        (4,4),
-        (5,4),
-        (6,4),
-        (5,3),
-        (5,2),
-        (4,2)
-    ]
+    obstacle_positions = [(2,4),(2,3),(2,2),(3,2),(5,2),(6,3),(2,6),
+                        (3,6),(4,6),(5,6),(4,4),(5,4),(6,4),(5,3),(5,2),(4,2)]
 
     obstacles = []
-    possible_obstacles = ["TallTree", "ShortTree", "Rock"]
+    possible_obstacles = ["Rock"] #We decided many obstacles was UGLY. we just want rocks, but are keeping a list anyway
 
     x = 0
     for pos in obstacle_positions:
@@ -128,16 +112,25 @@ def initialize():
         GAME_BOARD.set_el(pos[0], pos[1], obstacle)
     
     key = Obstacles()
-    key.IMAGE = "Key"
-    key.SOLID = False
-    GAME_BOARD.register(key)
-    GAME_BOARD.set_el(1,4, key)
+    create_obstacles(key, "Key", False, (1,4))
+
 
     door = Obstacles()
-    door.IMAGE = "DoorClosed"
-    door.SOLID = True
-    GAME_BOARD.register(door)
-    GAME_BOARD.set_el(4,1,door)
+    create_obstacles(door, "DoorClosed", True, (4,1))
+
+
+
+    #set trees in all x positions where y = 0 and all y positions where x = 0
+    #Creates border of trees around board
+    tree = Obstacles()
+    for x in range (GAME_WIDTH):
+        create_obstacles(tree, "ShortTree", True, (x,0))
+        for y in range(1, GAME_HEIGHT):
+            create_obstacles(tree, "ShortTree", True,(GAME_WIDTH -1, y))
+    for y in range(GAME_HEIGHT):
+        create_obstacles(tree, "ShortTree", True, (0,y))
+        for x in range(1, GAME_WIDTH):
+            create_obstacles(tree, "ShortTree", True, (x,GAME_HEIGHT-1))
 
 
     #Add gems to the board
@@ -155,6 +148,13 @@ def initialize():
     #     GAME_BOARD.register(gem)
     #     GAME_BOARD.set_el(gem_pos[0], gem_pos[1], gem)
 
+def create_obstacles(obstacle,imageVal, solidVal, pos):
+    #Create obstacle on board from Initialize function
+    #obstacle = Obstacles()
+    obstacle.IMAGE = imageVal
+    obstacle.SOLID = solidVal
+    GAME_BOARD.register(obstacle)
+    GAME_BOARD.set_el(pos[0], pos[1], obstacle)
 
 def keyboard_handler():
     direction = None
@@ -219,16 +219,9 @@ def keyboard_handler():
 
             if existing_el == PLAYER_BOY:
                 GAME_BOARD.draw_msg("YOU HAVE FOUND YOUR ONE TRUE LOVE!!!")
-                
-                for x in range (4):
-                    clock.schedule_interval(create_love, .5)    #make heart every half second
-                
-
-                # heart = Obstacles()
-                # heart.IMAGE = "Heart"
-                # GAME_BOARD.register(heart)
-                # GAME_BOARD.set_el(7,0, heart)
-                # create_love()
+                create_love()
+                # for x in range (4):
+                #     clock.schedule_interval(create_love, .5)    #make heart every half second
 
 
 def create_love():
@@ -237,13 +230,10 @@ def create_love():
     hearts = [(5,0)]#, (6,0), (7,0), (7,1)]
 
     for pos in hearts:
-
-        # GAME_BOARD.del_el(pos[0],pos[1])
-
+        # GAME_BOARD.del_el(pos[0],pos[1]) ######We're trying to make the hearts appear and disappear
         heart = Obstacles()
-        GAME_BOARD.register(heart)
         heart.IMAGE = "Heart"
-
+        GAME_BOARD.register(heart)
         GAME_BOARD.set_el(pos[0], pos[1], heart)
 
 
